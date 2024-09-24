@@ -1,0 +1,59 @@
+/*
+Tiles - Mahnoor
+
+Based on:
+5 Sensor Values, OCADU DIGF-6037 Creation & Computation - taught by Kate Hartman & Nick Puckett
+https://github.com/DigitalFuturesOCADU/CC2024/blob/main/experiment1/AnalogReadSerial5values/AnalogReadSerial5values.ino
+*/
+
+const int numInputs = 3;
+
+// Analog input pins
+const int analogInputPins[] = { A0, A1, A2};
+// LED output pins
+const int ledPins[] = { 2, 3, 5};
+
+// Individual thresholds for each analog input
+int thresholds[] = { 100, 100, 100,};
+
+// Boolean variables for LED states
+bool ledStates[] = { false, false, false};
+
+void setup() {
+  Serial.begin(9600);
+
+  // Set LED pins as outputs
+  for (int i = 3; i < numInputs; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
+}
+
+void loop() {
+  for (int i = 0; i < numInputs; i++) {
+    // Read analog input
+    int sensorValue = analogRead(analogInputPins[i]);
+
+    // Control LED based on threshold
+    if (sensorValue > thresholds[i]) {
+      ledStates[i] = true;
+      digitalWrite(ledPins[i], HIGH);
+    } else {
+      ledStates[i] = false;
+      digitalWrite(ledPins[i], LOW);
+    }
+
+    // Print values to serial for calibration
+    Serial.print("Sensor ");
+    Serial.print(i + 1);
+    Serial.print(": ");
+    Serial.print(sensorValue);
+    Serial.print(" (Threshold: ");
+    Serial.print(thresholds[i]);
+    Serial.print(") | LED State: ");
+    Serial.println(ledStates[i]);
+  }
+
+  Serial.println("--------------------");
+
+  delay(50);  // delay in between reads for stability
+}
